@@ -2257,7 +2257,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "nfteaMetadataService"
+name = "nftea_metadata_service"
 version = "0.1.0"
 dependencies = [
  "actix-web",
@@ -2274,6 +2274,7 @@ dependencies = [
  "log",
  "num_cpus",
  "pinata-sdk",
+ "rand 0.8.5",
  "serde",
  "serde_json",
  "strum",

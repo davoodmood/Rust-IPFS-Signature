@@ -78,13 +78,37 @@ impl<T: Hash + std::clone::Clone + std::cmp::PartialEq + Serialize + for<'a> Des
         while let Some(ref existing) = self.data[position] {
             if *existing == *item {
                 self.data[position] = None;
-                // self.rehash_delete(position);
                 self.save();
                 return;
             }
 
             position = (position + 1) % self.capacity;
         }
+    }
+
+    pub fn fill(&mut self, items: Vec<T>) {
+        for item in items {
+            self.fill_one(item);
+        }
+        self.save();
+    }
+
+    fn fill_one(&mut self, item: T) {
+        let mut hasher = std::collections::hash_map::DefaultHasher::new();
+        item.hash(&mut hasher);
+        let mut position = hasher.finish() as usize % self.capacity;
+        let mut load = 1;
+    
+        while self.data[position].is_some() {
+            if load > self.capacity {
+                return;
+            }
+    
+            position = (position + 1) % self.capacity;
+            load += 1;
+        }
+    
+        self.data[position] = Some(item);
     }
 
     fn save(&self) {

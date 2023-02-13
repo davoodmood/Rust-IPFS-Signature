@@ -1,15 +1,17 @@
 use serde::{Serialize, Deserialize};
 use strum_macros::{EnumString, Display};
+use std::collections::hash_map::DefaultHasher;
+use std::hash::{Hash, Hasher};
 
 #[derive(Serialize, Deserialize, Debug)]
-struct SignedURIResponse {
+pub struct SignedURIResponse {
   signature: String,
   ipfs_uri: String,
   metadata: QuarkCollectionMetadataStandard,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct QuarkCollectionMetadataStandard {
+pub struct QuarkCollectionMetadataStandard {
   name: String,
   image: String,
   description: String,
@@ -18,14 +20,14 @@ struct QuarkCollectionMetadataStandard {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Origins {
+pub struct Origins {
   template: Template,
   project: Project,
   collection: Collection,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Template {
+pub struct Template {
   id: String,
   name: String,
   image: String,
@@ -34,7 +36,7 @@ struct Template {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Project {
+pub struct Project {
   id: String,
   name: String,
   image: String,
@@ -42,7 +44,7 @@ struct Project {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct Collection {
+pub struct Collection {
   id: String,
   name: String,
   description: Option<String>,
@@ -57,14 +59,21 @@ enum Variations {
   Static(u32),
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
-struct Attribute {
-  trait_type: Option<String>, // ingrident
-  value: String, // e.g. blacktea
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub struct Attribute {
+  pub trait_type: Option<String>, // ingrident
+  pub value: String, // e.g. blacktea
+}
+
+impl Hash for Attribute {
+  fn hash<H: Hasher>(&self, state: &mut H) {
+      self.trait_type.hash(state);
+      self.value.hash(state);
+  }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct AttributeValueOnly {
+pub struct AttributeValueOnly {
       value: String, // e.g. blacktea
 }
 
